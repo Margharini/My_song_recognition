@@ -22,18 +22,32 @@ def index_song(file_path, song_name):
 
 
 def listen_mode():
-    print("Recording...")
-    y, sr = record_audio(duration=5)
+    print("Listening continuously...")
 
-    fingerprints = generate_fingerprint(y, sr)
+    import numpy as np
 
-    song = match_fingerprints(fingerprints)
+    buffer = np.array([])
+    sample_rate = 44100
 
-    if song:
-        print("Detected song:", song)
-    else:
-        print("No match found")
+    while True:
+        y, sr = record_audio(duration=1)
+        buffer = np.concatenate((buffer, y))
 
+        # analizujemy dopiero gdy mamy 5 sekund
+        if len(buffer) >= sample_rate * 5:
+            print("Analyzing...")
+            fingerprints = generate_fingerprint(buffer, sr)
+
+            song = match_fingerprints(fingerprints)
+
+            if song:
+                print("Detected song:", song)
+                break
+            else:
+                print("No match yet...")
+
+            # przesuwamy okno o 1 sekundę
+            buffer = buffer[sample_rate:]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Shazam Clone CLI")

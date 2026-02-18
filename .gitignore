@@ -2,6 +2,8 @@
 venv/
 ENV/
 env/
+# mp3 Songs - copywrites
+samples/
 
 # Python cache
 __pycache__/
